@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Melhorar a experiência de arrastar e redimensionar */
+.window-dragging {
+  opacity: 0.9;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.window-resizing {
+  opacity: 0.9;
+  transition: none !important;
+}
+
+/* Prevenir seleção de texto durante arraste */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
