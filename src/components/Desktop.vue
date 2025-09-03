@@ -19,6 +19,8 @@
       @close="closeWindow"
       @focus="focusWindow"
       @minimize="minimizeWindow"
+      @maximize="maximizeWindow"
+      @decrease="decreaseWindow"
       @update:window="(updates) => updateWindow(window.id, updates)"
     />
 
@@ -37,6 +39,10 @@ import { ref } from 'vue'
 import Icon from './Icon.vue'
 import Window from './Window.vue'
 import Taskbar from './Taskbar.vue'
+import TerminalContent from './TerminalContent.vue'
+import BrowserContent from './BrowserContent.vue'
+import DocumentsContent from './DocumentsContent.vue'
+import SettingsContent from './SettingsContent.vue'
 
 const windows = ref([])
 let windowId = 0
@@ -51,13 +57,32 @@ const openWindow = (type) => {
     position: { x: 100 + windows.value.length * 20, y: 100 + windows.value.length * 20 },
     size: { width: 500, height: 300 },
     focused: true,
-    minimized: false
+    minimized: false,
+    maximized: false
   })
 }
 
 function minimizeWindow(id) {
   windows.value = windows.value.map(w =>
     w.id === id ? { ...w, minimized: true } : w
+  )
+}
+
+function maximizeWindow(id) {
+  windows.value = windows.value.map(w =>
+    w.id === id ? { ...w, size: { width: window.innerWidth - 40, height: window.innerHeight - 100 }, position: { x: 20, y: 20 } } : w
+  )
+  windows.value = windows.value.map(w =>
+    w.id === id ? { ...w, maximized: true } : w
+  )
+}
+
+function decreaseWindow(id) {
+  windows.value = windows.value.map(w =>
+    w.id === id ? { ...w, size: { width: Math.max(200, w.size.width - 500), height: Math.max(150, w.size.height - 250) } } : w
+  )
+  windows.value = windows.value.map(w =>
+    w.id === id ? { ...w, maximized: false } : w
   )
 }
 
@@ -94,13 +119,13 @@ const getWindowTitle = (type) => {
 }
 
 const getWindowContent = (type) => {
-  const contents = {
-    terminal: 'fro@linux-desktop:~$ echo "Bem-vindo ao meu desktop virtual!"\n> Sistema funcionando perfeitamente!\n> Use os ícones ou o menu iniciar para explorar.\n\n> Comandos disponíveis:\n> - ls: listar arquivos\n> - cd: mudar diretório\n> - pwd: diretório atual\n> - exit: fechar terminal',
-    browser: '<div class="p-4"><h1 class="text-2xl font-bold text-blue-800 mb-4">🌐 Navegador Web</h1><p class="text-gray-700">Bem-vindo ao navegador virtual!</p><ul class="mt-4 list-disc list-inside"><li>📧 Email Web</li><li>📰 Notícias</li><li>🎵 Música Online</li></ul></div>',
-    documents: '📁 Pasta de Documentos\n├── 📄 relatorio.pdf (2.4 MB)\n├── 📄 projeto-vue.txt (15 KB)\n├── 📄 curriculum.pdf (1.1 MB)\n├── 📁 Trabalho\n│   ├── 📄 apresentacao.pptx\n│   └── 📄 relatorio_final.doc\n└── 📁 imagens\n    ├── 🖼️ screenshot1.png\n    └── 🖼️ wallpaper.jpg',
-    settings: '⚙️ Configurações do Sistema\n\n• Tema: Escuro\n• Resolução: 1920x1080\n• Som: Ativado\n• Brilho: 80%\n• Rede: Conectado - WiFi\n• Bateria: 95% (Carregando)\n\n📊 Uso do Sistema:\n• CPU: 12%\n• Memória: 4.2GB/16GB\n• Disco: 128GB/512GB'
+  const components = {
+    terminal: TerminalContent,
+    browser: BrowserContent,
+    documents: DocumentsContent,
+    settings: SettingsContent
   }
-  return contents[type] || 'Conteúdo da janela'
+  return components[type] || null
 }
 </script>
 

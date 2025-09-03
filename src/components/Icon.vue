@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col items-center w-16 cursor-pointer transition transform hover:scale-105" @click="$emit('click')">
-    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-1 shadow-md">
+  <div class="hover:bg-gray-600 flex flex-col items-center w-16 cursor-pointer transition transform hover:scale-105" @click="$emit('click')">
+    <div class=" w-12 h-12 flex items-center justify-center mb-1 shadow-md">
       <span class="text-white text-2xl">{{ getIcon }}</span>
     </div>
     <span class="text-white text-xs text-center font-medium text-shadow">{{ label }}</span>

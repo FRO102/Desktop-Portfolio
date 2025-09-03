@@ -1,7 +1,7 @@
 <template>
   <div 
     v-if="!window.minimized"
-    class="absolute bg-gray-100 border border-gray-300 rounded-lg shadow-2xl overflow-hidden select-none"
+    class="absolute shadow-2xl overflow-hidden select-none"
     :class="[
       isDragging ? 'window-dragging no-select' : '',
       isResizing ? 'window-resizing no-select' : ''
@@ -11,7 +11,7 @@
   >
     <!-- Barra de título -->
     <div 
-      class="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white cursor-move"
+      class="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-stone-700 to-stone-950 text-white cursor-move"
       @mousedown="startDrag"
     >
       <div class="flex items-center space-x-2">
@@ -19,20 +19,36 @@
         <h3 class="text-sm font-medium">{{ window.title }}</h3>
       </div>
       <div class="flex space-x-2">
-        <button class="w-4 h-4 bg-yellow-400 rounded-full hover:bg-yellow-300" @click="minimizeWindow"></button>
-        <button class="w-4 h-4 bg-red-500 rounded-full hover:bg-red-400" @click="closeWindow"></button>
+        <button class="w-5 h-5 flex items-center justify-center rounded hover:bg-stone-800 transition" @click="minimizeWindow" title="Minimizar">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="3" y="7" width="8" height="2" rx="1" fill="white"/>
+          </svg>
+        </button>
+        
+          <button v-show="window.maximized==false" class="w-5 h-5 flex items-center justify-center rounded hover:bg-green-700 transition" @click="maximizeWindow" title="Maximizar">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="3" y="3" width="8" height="8" rx="2" stroke="white" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+          <button v-show="window.maximized == true" class="w-5 h-5 flex items-center justify-center rounded hover:bg-green-700 transition" @click="decreaseWindow" title="Diminuir">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="3" y="5 " width="8" height="5" rx="2" stroke="white" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+
+        <button class="w-5 h-5 flex items-center justify-center rounded hover:bg-red-600 transition" @click="closeWindow" title="Fechar">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <line x1="4" y1="4" x2="10" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="10" y1="4" x2="4" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
     </div>
 
     <!-- Conteúdo -->
-    <div class="p-4 h-[calc(100%-40px)] bg-white overflow-auto">
-      <pre v-if="window.type === 'terminal'" class="text-green-600 bg-black p-4 rounded font-mono text-sm">{{ window.content }}</pre>
-      <iframe
-        v-else-if="window.type === 'browser'"
-        :src="'https://www.dj3d.io'"
-        class="w-full h-full border-none"
-      ></iframe>
-      <div v-else class="text-gray-800 whitespace-pre-line">{{ window.content }}</div>
+    <div class=" h-[calc(100%-40px)] bg-white overflow-auto">
+  <component :is="window.content" v-if="window.content" />
+  <div v-else class="text-gray-800 whitespace-pre-line">Sem conteúdo</div>
     </div>
 
     <!-- Handles para redimensionamento -->
@@ -51,12 +67,16 @@
 
 <script setup>
 import { defineProps, defineEmits, computed, onUnmounted } from 'vue'
+import TerminalContent from './TerminalContent.vue'
+import BrowserContent from './BrowserContent.vue'
+import DocumentsContent from './DocumentsContent.vue'
+import SettingsContent from './SettingsContent.vue'
 
 const props = defineProps({
   window: Object
 })
 
-const emit = defineEmits(['close', 'focus','minimize', 'update:window'])
+const emit = defineEmits(['close', 'focus','decrease','minimize', 'maximize', 'update:window'])
 
 // Computed para o estilo da janela
 const windowStyle = computed(() => ({
@@ -82,7 +102,8 @@ let startTop = 0
 const closeWindow = () => emit('close', props.window.id)
 
 const minimizeWindow = () => emit('minimize', props.window.id)
-
+const maximizeWindow = () => emit('maximize', props.window.id)
+const decreaseWindow = () => emit('decrease', props.window.id)
 const focusWindow = () => emit('focus', props.window.id)
 
 const startDrag = (e) => {
