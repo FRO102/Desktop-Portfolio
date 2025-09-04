@@ -46,6 +46,7 @@ const restoreWindow = (id) => emit('restore', id)
 
 // Alterna entre minimizar/restaurar ao clicar no botão da Taskbar
 function handleTaskbarClick(window) {
+
   if (window.minimized) {
     restoreWindow(window.id)
     focusWindow(window.id)

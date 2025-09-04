@@ -29,13 +29,13 @@
   :windows="windows"
   @minimize="minimizeWindow"
   @restore="restoreWindow"
-  @focus="focusWindow"
+  @focus="focusWindowBar"
 />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, markRaw } from 'vue'
 import Icon from './Icon.vue'
 import Window from './Window.vue'
 import Taskbar from './Taskbar.vue'
@@ -53,7 +53,7 @@ const openWindow = (type) => {
     id,
     type,
     title: getWindowTitle(type),
-    content: getWindowContent(type),
+    content: markRaw(getWindowContent(type)),
     position: { x: 100 + windows.value.length * 20, y: 100 + windows.value.length * 20 },
     size: { width: 500, height: 300 },
     focused: true,
@@ -96,10 +96,19 @@ function closeWindow(id) {
   windows.value = windows.value.filter(w => w.id !== id)
 }
 
-function focusWindow(id) {
+function focusWindowBar(id) {
   windows.value = windows.value.map(w =>
-    w.id === id ? { ...w, focused: true, minimized: false } : w
+    w.id === id ? { ...w, focused: true} : w
   )
+}
+
+function focusWindow(id) {
+  const idx = windows.value.findIndex(w => w.id === id)
+  if (idx !== -1) {
+    const win = { ...windows.value[idx], focused: true, minimized: false }
+    windows.value.splice(idx, 1)
+    windows.value.push(win)
+  }
 }
 
 const updateWindow = (windowId, updates) => {
