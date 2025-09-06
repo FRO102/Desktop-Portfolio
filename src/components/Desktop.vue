@@ -5,7 +5,7 @@
     
     <!-- Ícones do Desktop -->
     <div class="absolute top-4 left-4 space-y-6">
-      <Icon icon="folder" label="Documentos" @click="openWindow('documents')" />
+      <Icon icon="documents" label="Documentos" @click="openWindow('documents')" />
       <Icon icon="terminal" label="Terminal" @click="openWindow('terminal')" />
       <Icon icon="browser" label="Navegador" @click="openWindow('browser')" />
       <Icon icon="settings" label="Configurações" @click="openWindow('settings')" />
@@ -24,18 +24,23 @@
       @update:window="(updates) => updateWindow(window.id, updates)"
     />
 
+    <!-- Toolbar flutuante -->
+    <Toolbar v-if="showToolbar" class="absolute left-4 bottom-16 z-50" />
+
     <!-- Taskbar -->
 <Taskbar 
   :windows="windows"
   @minimize="minimizeWindow"
   @restore="restoreWindow"
   @focus="focusWindowBar"
+  @open-toolbar="toggleToolbar"
 />
   </div>
 </template>
 
 <script setup>
 import { ref, markRaw } from 'vue'
+import Toolbar from './Toolbar.vue'
 import Icon from './Icon.vue'
 import Window from './Window.vue'
 import Taskbar from './Taskbar.vue'
@@ -43,6 +48,12 @@ import TerminalContent from './TerminalContent.vue'
 import BrowserContent from './BrowserContent.vue'
 import DocumentsContent from './DocumentsContent.vue'
 import SettingsContent from './SettingsContent.vue'
+
+const showToolbar = ref(false)
+
+function toggleToolbar() {
+  showToolbar.value = !showToolbar.value
+}
 
 const windows = ref([])
 let windowId = 0
@@ -61,6 +72,7 @@ const openWindow = (type) => {
     maximized: false
   })
 }
+
 
 function minimizeWindow(id) {
   windows.value = windows.value.map(w =>
@@ -119,12 +131,12 @@ const updateWindow = (windowId, updates) => {
 
 const getWindowTitle = (type) => {
   const titles = {
-    terminal: 'Terminal - fro@linux-desktop',
-    browser: 'Navegador Web',
-    documents: 'Documentos',
-    settings: 'Configurações do Sistema'
+    terminal: 'Terminal',
+    browser: 'Browser',
+    documents: 'Documents',
+    settings: 'Settings'
   }
-  return titles[type] || 'Janela'
+  return titles[type] || ' '
 }
 
 const getWindowContent = (type) => {
@@ -132,10 +144,11 @@ const getWindowContent = (type) => {
     terminal: TerminalContent,
     browser: BrowserContent,
     documents: DocumentsContent,
-    settings: SettingsContent
+    settings: SettingsContent,
   }
   return components[type] || null
 }
+
 </script>
 
 <style scoped>

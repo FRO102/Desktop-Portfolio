@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full flex items-center justify-center bg-white">
+  <div class="h-full w-full flex items-center justify-center bg-white overflow-auto">
     <iframe src="https://www.example.com" class="w-full h-full border-none" title="Navegador"></iframe>
   </div>
 </template>
