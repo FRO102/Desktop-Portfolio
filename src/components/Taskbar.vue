@@ -23,7 +23,7 @@
           <img v-else-if="window.type === 'browser'" src="./icons/browser.png" alt="" style="width:18px; height:18px;">
           <img v-else-if="window.type === 'documents'" src="./icons/documents.png" alt="" style="width:18px; height:18px;">
           <img v-else-if="window.type === 'settings'" src="./icons/settings.png" alt="" style="width:18px; height:18px;">
-        
+          <img v-else-if="window.type === 'myterminal'" src="./icons/terminal.png" alt="" style="width:18px; height:18px;">
         </span>
         <!--<span>{{ window.title.split(' - ')[0] }}</span>-->
       </button>

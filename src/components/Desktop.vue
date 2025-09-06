@@ -3,14 +3,15 @@
     <!-- Wallpaper -->
     <div class="absolute inset-0 bg-cover bg-center opacity-0" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMTZINDhWNDhIMTZWMTZaIiBmaWxsPSIjMzMzIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=')"></div>
     
-    <!-- Ícones do Desktop -->
+    <!-- Ícones do Desktop 
     <div class="absolute top-4 left-4 space-y-6">
       <Icon icon="documents" label="Documentos" @click="openWindow('documents')" />
       <Icon icon="terminal" label="Terminal" @click="openWindow('terminal')" />
       <Icon icon="browser" label="Navegador" @click="openWindow('browser')" />
       <Icon icon="settings" label="Configurações" @click="openWindow('settings')" />
     </div>
-
+    -->
+    <Icon icon="terminal" label="My Terminal" @click="openWindow('myterminal')" />
     <!-- Janelas -->
     <Window 
       v-for="window in windows" 
@@ -24,8 +25,8 @@
       @update:window="(updates) => updateWindow(window.id, updates)"
     />
 
-    <!-- Toolbar flutuante -->
-    <Toolbar v-if="showToolbar" class="absolute left-4 bottom-16 z-50" />
+  <!-- Toolbar flutuante -->
+  <Toolbar v-if="showToolbar" class="absolute left-4 z-50" style="bottom: 45px;" @open-window="openWindow" />
 
     <!-- Taskbar -->
 <Taskbar 
@@ -48,6 +49,7 @@ import TerminalContent from './TerminalContent.vue'
 import BrowserContent from './BrowserContent.vue'
 import DocumentsContent from './DocumentsContent.vue'
 import SettingsContent from './SettingsContent.vue'
+import MyTerminal from './MyTerminal.vue'
 
 const showToolbar = ref(false)
 
@@ -134,7 +136,8 @@ const getWindowTitle = (type) => {
     terminal: 'Terminal',
     browser: 'Browser',
     documents: 'Documents',
-    settings: 'Settings'
+    settings: 'Settings',
+    myterminal: 'My Terminal'
   }
   return titles[type] || ' '
 }
@@ -145,6 +148,7 @@ const getWindowContent = (type) => {
     browser: BrowserContent,
     documents: DocumentsContent,
     settings: SettingsContent,
+    myterminal: MyTerminal,
   }
   return components[type] || null
 }
